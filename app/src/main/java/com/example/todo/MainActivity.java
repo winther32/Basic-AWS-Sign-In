@@ -1,5 +1,6 @@
 package com.example.todo;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -27,14 +28,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         logIn = findViewById(R.id.login_main);
 
-        logIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchLogIn();
-            }
-        });
+        logIn.setOnClickListener(v -> launchLogIn());
 
         // Verify the current auth session
         Amplify.Auth.fetchAuthSession(

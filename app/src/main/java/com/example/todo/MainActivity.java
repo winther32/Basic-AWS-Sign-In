@@ -33,11 +33,11 @@ public class MainActivity extends AppCompatActivity {
 
         logIn.setOnClickListener(v -> launchLogIn());
 
-        // Verify the current auth session
-        Amplify.Auth.fetchAuthSession(
-                result -> Log.i("Tutorial", result.toString()),
-                error -> Log.e("Tutorial", error.toString())
-        );
+//        // Verify the current auth session
+//        Amplify.Auth.fetchAuthSession(
+//                result -> Log.i("Tutorial", result.toString()),
+//                error -> Log.e("Tutorial", error.toString())
+//        );
 
         // Log the DataStore sync with the cloud
 //        Amplify.DataStore.observe(Todo.class,

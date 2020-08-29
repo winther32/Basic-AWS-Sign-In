@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:name">
+        <activity android:name=".ui.login.newUser">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.todo.ui.login.LoginActivity" />
+        </activity>
         <activity
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login">

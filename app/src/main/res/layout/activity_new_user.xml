@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.login.newUser">
+
+    <EditText
+        android:id="@+id/username_nu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/email_nu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintStart_toStartOf="@+id/username_nu"
+        app:layout_constraintTop_toBottomOf="@+id/username_nu" />
+
+    <EditText
+        android:id="@+id/password_nu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintStart_toStartOf="@+id/email_nu"
+        app:layout_constraintTop_toBottomOf="@+id/email_nu" />
+
+    <EditText
+        android:id="@+id/passwordConfirm_nu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Confirm Password"
+        android:inputType="textPassword"
+        app:layout_constraintStart_toStartOf="@+id/password_nu"
+        app:layout_constraintTop_toBottomOf="@+id/password_nu" />
+
+    <Button
+        android:id="@+id/submit_nu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="SUBMIT"
+        app:layout_constraintEnd_toEndOf="@+id/passwordConfirm_nu"
+        app:layout_constraintStart_toStartOf="@+id/passwordConfirm_nu"
+        app:layout_constraintTop_toBottomOf="@+id/passwordConfirm_nu" />
+</androidx.constraintlayout.widget.ConstraintLayout>

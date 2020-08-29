@@ -1,15 +1,12 @@
 package com.example.todo.ui.login;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.StringRes;
@@ -19,46 +16,51 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.todo.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class newUser extends AppCompatActivity {
 
-    private LoginViewModel loginViewModel;
+    private NU_ViewModel viewModel;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_new_user);
         ActionBar ab = getSupportActionBar();
         assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
+        ab.setTitle("New User Sign In");
 
+        viewModel = new ViewModelProvider(this, new NU_ViewModelFactory())
+                .get(NU_ViewModel.class);
 
-        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
-                .get(LoginViewModel.class);
+        final EditText usernameEditText = findViewById(R.id.username_nu);
+        final EditText emailEditText = findViewById(R.id.email_nu);
+        final EditText passwordEditText = findViewById(R.id.password_nu);
+        final EditText passwordConfirmEditText = findViewById(R.id.passwordConfirm_nu);
+        final Button submit = findViewById(R.id.submit_nu);
 
-        final EditText usernameEditText = findViewById(R.id.username);
-        final EditText passwordEditText = findViewById(R.id.password);
-        final Button loginButton = findViewById(R.id.login);
-        final Button newUserButton = findViewById(R.id.newUser_login);
-        final ProgressBar loadingProgressBar = findViewById(R.id.loading);
-
-        loginViewModel.getLoginFormState().observe(this, loginFormState -> {
+        viewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {
                 return;
             }
-            loginButton.setEnabled(loginFormState.isDataValid());
+            submit.setEnabled(loginFormState.isDataValid());
             if (loginFormState.getUsernameError() != null) {
                 usernameEditText.setError(getString(loginFormState.getUsernameError()));
+            }
+            if (loginFormState.getEmailError() != null) {
+                emailEditText.setError(getString(loginFormState.getEmailError()));
             }
             if (loginFormState.getPasswordError() != null) {
                 passwordEditText.setError(getString(loginFormState.getPasswordError()));
             }
+            if (loginFormState.getConfirmError() != null) {
+                passwordConfirmEditText.setError(getString(loginFormState.getConfirmError()));
+            }
         });
 
-        loginViewModel.getLoginResult().observe(this, loginResult -> {
+        viewModel.getLoginResult().observe(this, loginResult -> {
             if (loginResult == null) {
                 return;
             }
-            loadingProgressBar.setVisibility(View.GONE);
             if (loginResult.getError() != null) {
                 showLoginFailed(loginResult.getError());
             }
@@ -84,35 +86,26 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                loginViewModel.loginDataChanged(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                viewModel.loginDataChanged(usernameEditText.getText().toString(),
+                        emailEditText.getText().toString(), passwordEditText.getText().toString(),
+                        passwordConfirmEditText.getText().toString());
             }
         };
-        usernameEditText.addTextChangedListener(afterTextChangedListener);
+        emailEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                loginViewModel.login(usernameEditText.getText().toString(),
+                viewModel.login(emailEditText.getText().toString(),
                         passwordEditText.getText().toString());
             }
             return false;
         });
 
-        loginButton.setOnClickListener(v -> {
-            loadingProgressBar.setVisibility(View.VISIBLE);
-            loginViewModel.login(usernameEditText.getText().toString(),
+        submit.setOnClickListener(v -> {
+            viewModel.login(emailEditText.getText().toString(),
                     passwordEditText.getText().toString());
         });
 
-        newUserButton.setOnClickListener(v -> {
-            launchNewUserActivity();
-        });
-    }
-
-    // Launcher for the new user registration log in path.
-    private void launchNewUserActivity() {
-        Intent intent = new Intent(this, newUser.class);
-        startActivity(intent);
     }
 
     private void updateUiWithUser(LoggedInUserView model) {

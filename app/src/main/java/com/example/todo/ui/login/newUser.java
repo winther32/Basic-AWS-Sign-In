@@ -91,15 +91,19 @@ public class newUser extends AppCompatActivity {
                         passwordConfirmEditText.getText().toString());
             }
         };
+        usernameEditText.addTextChangedListener(afterTextChangedListener);
         emailEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                viewModel.login(emailEditText.getText().toString(),
-                        passwordEditText.getText().toString());
-            }
-            return false;
-        });
+        passwordConfirmEditText.addTextChangedListener(afterTextChangedListener);
+
+        // Code to be able to hit the check on the keyboard to auto launch submit
+//        passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
+//            if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                viewModel.login(emailEditText.getText().toString(),
+//                        passwordEditText.getText().toString());
+//            }
+//            return false;
+//        });
 
         submit.setOnClickListener(v -> {
             viewModel.login(emailEditText.getText().toString(),

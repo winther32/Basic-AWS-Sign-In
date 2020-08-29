@@ -32,16 +32,26 @@ public class NU_FormState {
     }
 
     @Nullable
-    Integer getUsernameError() { return  usernameError; }
+    Integer getUsernameError() {
+        return  usernameError;
+    }
 
     @Nullable
-    Integer getEmailError() { return emailError; }
+    Integer getEmailError() {
+        return emailError;
+    }
 
     @Nullable
-    Integer getPasswordError() { return passwordError; }
+    Integer getPasswordError() {
+        return passwordError;
+    }
 
     @Nullable
-    Integer getConfirmError() { return  confirmError; }
+    Integer getConfirmError() {
+        return  confirmError;
+    }
 
-    boolean isDataValid() { return isDataValid; }
+    boolean isDataValid() {
+        return isDataValid;
+    }
 }

@@ -51,4 +51,13 @@ public class LoginRepository {
         }
         return result;
     }
+
+    public Result<LoggedInUser> signUp(String username, String email, String password) {
+        Result<LoggedInUser> result = dataSource.signUp(username, email, password);
+        // Save Sign Up user info in repo. Will use to log in on confirmation success.
+        if (result instanceof Result.Success) {
+            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+        }
+        return result;
+    }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.content.Intent;
 import android.util.Patterns;
 
 import com.example.todo.data.LoginRepository;
@@ -41,6 +42,17 @@ public class NU_ViewModel extends ViewModel {
             loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
         } else {
             loginResult.setValue(new LoginResult(R.string.login_failed));
+        }
+    }
+
+    public Boolean signUp(String username, String email, String password) {
+        Result<LoggedInUser> result = loginRepository.signUp(username, email, password);
+        // Boolean if Sign Up with AWS was a success or not
+        if (result instanceof Result.Success) {
+            return true;
+        } else {
+            loginResult.setValue(new LoginResult(R.string.signup_failed));
+            return false;
         }
     }
 

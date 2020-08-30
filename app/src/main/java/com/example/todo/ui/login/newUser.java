@@ -1,9 +1,11 @@
 package com.example.todo.ui.login;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -106,10 +108,22 @@ public class newUser extends AppCompatActivity {
 //        });
 
         submit.setOnClickListener(v -> {
-            viewModel.login(emailEditText.getText().toString(),
-                    passwordEditText.getText().toString());
+            // On sign up success launch confirmation. Else show error in Toast.
+            if (viewModel.signUp(usernameEditText.getText().toString(), emailEditText.getText().toString(),
+                    passwordEditText.getText().toString())) {
+                // launch confirmation activity
+                launchConfirmation();
+                finish();
+            } else {
+                Toast.makeText(this, "Sign Up failed", Toast.LENGTH_SHORT).show();
+            }
         });
 
+    }
+
+    private void launchConfirmation() {
+        Intent intent = new Intent(this, confirmation.class);
+        startActivity(intent);
     }
 
     private void updateUiWithUser(LoggedInUserView model) {

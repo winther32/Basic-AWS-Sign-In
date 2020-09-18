@@ -112,7 +112,7 @@ public class newUser extends AppCompatActivity {
             if (viewModel.signUp(usernameEditText.getText().toString(), emailEditText.getText().toString(),
                     passwordEditText.getText().toString())) {
                 // launch confirmation activity
-                launchConfirmation();
+                launchConfirmation(emailEditText.getText().toString());
                 finish();
             } else {
                 Toast.makeText(this, "Sign Up failed", Toast.LENGTH_SHORT).show();
@@ -121,8 +121,9 @@ public class newUser extends AppCompatActivity {
 
     }
 
-    private void launchConfirmation() {
+    private void launchConfirmation(String email) {
         Intent intent = new Intent(this, confirmation.class);
+        intent.putExtra("username", email);
         startActivity(intent);
     }
 

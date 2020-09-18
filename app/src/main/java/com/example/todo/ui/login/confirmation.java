@@ -28,18 +28,21 @@ public class confirmation extends AppCompatActivity {
         setContentView(R.layout.activity_confirmation);
 
         final EditText number = findViewById(R.id.confirmationEditText);
+        final EditText email = findViewById(R.id.confirmEmail);
         final Button confirmBtn = findViewById(R.id.confirmBtn);
+
+//        String email = getIntent().getStringExtra("username");
 
         confirmBtn.setOnClickListener(v -> {
             // Commented out AWS to debug data flow
             try {
-//            // Send to AWS to confirm
-//            Amplify.Auth.confirmSignUp(
-//                    "username",
-//                    "the code you received via email",
-//                    result -> Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
-//                    error -> Log.e("AuthQuickstart", error.toString())
-//            );
+            // Send to AWS to confirm
+            Amplify.Auth.confirmSignUp(
+                    email.getText().toString(),
+                    number.getText().toString(),
+                    result -> Log.i("Tutorial", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
+                    error -> Log.e("Tutorial", error.toString())
+            );
                 Toast.makeText(this, "Sign up confirmed", Toast.LENGTH_SHORT).show();
                 finish();
             } catch (Exception e) {

@@ -43,21 +43,18 @@ public class LoginRepository {
         // @see https://developer.android.com/training/articles/keystore
     }
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<LoggedInUser> login(String email, String password) {
         // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
+        Result<LoggedInUser> result = dataSource.login(email, password);
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
         }
         return result;
     }
 
+    // Sign up does not sign in
     public Result<LoggedInUser> signUp(String username, String email, String password) {
         Result<LoggedInUser> result = dataSource.signUp(username, email, password);
-        // Save Sign Up user info in repo. Will use to log in on confirmation success.
-        if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
-        }
         return result;
     }
 }

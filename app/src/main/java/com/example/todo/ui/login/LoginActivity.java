@@ -64,11 +64,11 @@ public class LoginActivity extends AppCompatActivity {
             }
             if (loginResult.getSuccess() != null) {
                 updateUiWithUser(loginResult.getSuccess());
-            }
-            setResult(Activity.RESULT_OK);
 
-            //Complete and destroy login activity once successful
-            finish();
+                setResult(Activity.RESULT_OK);
+                //Complete and destroy login activity once successful
+                finish();
+            }
         });
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
@@ -92,13 +92,13 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText.addTextChangedListener(afterTextChangedListener);
 
         // Launches the login process from the keyboard
-        passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
-            }
-            return false;
-        });
+//        passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
+//            if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                loginViewModel.login(usernameEditText.getText().toString(),
+//                        passwordEditText.getText().toString());
+//            }
+//            return false;
+//        });
 
         loginButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
@@ -109,11 +109,22 @@ public class LoginActivity extends AppCompatActivity {
         newUserButton.setOnClickListener(v -> {
             launchNewUserActivity();
         });
+
+        Button confirm = findViewById(R.id.confirmBtn_login);
+        confirm.setOnClickListener(v -> {
+            launchConfirm();
+        });
     }
 
     // Launcher for the new user registration log in path.
     private void launchNewUserActivity() {
         Intent intent = new Intent(this, newUser.class);
+        startActivity(intent);
+    }
+
+    private void launchConfirm() {
+        Intent intent = new Intent(this, confirmation.class);
+//        intent.putExtra("username", "");
         startActivity(intent);
     }
 

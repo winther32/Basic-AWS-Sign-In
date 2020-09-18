@@ -36,4 +36,16 @@
         app:layout_constraintBottom_toTopOf="@+id/confirmationEditText"
         app:layout_constraintEnd_toEndOf="@+id/confirmationEditText"
         app:layout_constraintStart_toStartOf="@+id/confirmationEditText" />
+
+    <EditText
+        android:id="@+id/confirmEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:hint="email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="@+id/confirmBtn"
+        app:layout_constraintStart_toStartOf="@+id/confirmBtn"
+        app:layout_constraintTop_toBottomOf="@+id/confirmBtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

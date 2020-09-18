@@ -9,19 +9,24 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amplifyframework.auth.AuthUser;
 import com.amplifyframework.auth.AuthUserAttributeKey;
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.core.model.query.Where;
 import com.amplifyframework.datastore.generated.model.Priority;
 import com.amplifyframework.datastore.generated.model.Todo;
+import com.example.todo.data.LoginRepository;
 import com.example.todo.ui.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button logIn;
+    Button logIn, signOut;
+    TextView user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +35,32 @@ public class MainActivity extends AppCompatActivity {
 
 
         logIn = findViewById(R.id.login_main);
+        signOut = findViewById(R.id.signOut_main);
+        user = findViewById(R.id.userdisp_main);
+
+        // Verify the current auth session
+        Amplify.Auth.fetchAuthSession(
+                result -> Log.i("Tutorial", result.toString()),
+                error -> Log.e("Tutorial", error.toString())
+        );
+
+        AuthUser awsUser = Amplify.Auth.getCurrentUser();
+        if (awsUser == null) {
+            user.setText("Not signed in");
+        } else {
+            user.setText("Welcome back " + awsUser.getUsername());
+        }
 
         logIn.setOnClickListener(v -> launchLogIn());
 
-//        // Verify the current auth session
-//        Amplify.Auth.fetchAuthSession(
-//                result -> Log.i("Tutorial", result.toString()),
-//                error -> Log.e("Tutorial", error.toString())
-//        );
+        // Signs current user out.
+        signOut.setOnClickListener(v -> {
+            Amplify.Auth.signOut(
+                    () -> Log.i("Tutorial", "Signed out successfully"),
+                    error -> Log.e("Tutorial", error.toString())
+            );
+            user.setText("Signed out");
+        });
 
         // Log the DataStore sync with the cloud
 //        Amplify.DataStore.observe(Todo.class,
@@ -91,25 +114,5 @@ public class MainActivity extends AppCompatActivity {
     public void launchLogIn() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
-    }
-
-    private void signIn(String username, String email, String password) {
-        // if any field is empty, reject
-        if (username.trim().equals("") || email.trim().equals("") || password.equals("")) {
-            Toast.makeText(this, "Please complete all fields", Toast.LENGTH_SHORT).show();
-        } else { // All fields have something entered
-            try {
-                // Insert aws log in code
-                Amplify.Auth.signUp(
-                        username,
-                        password,
-                        AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), password).build(),
-                        result -> Log.i("Auth", "Result: " + result.toString()),
-                        error -> Log.e("Auth", "Sign up failed", error)
-                );
-            } catch (Exception e){
-                Log.e("Auth", "Sign in failed on Mac's function");
-            }
-        }
     }
 }

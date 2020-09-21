@@ -33,17 +33,18 @@ public class NU_ViewModel extends ViewModel {
         return loginResult;
     }
 
-    public void login(String username, String password) {
-        // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(username, password);
-
-        if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
-        } else {
-            loginResult.setValue(new LoginResult(R.string.login_failed));
-        }
-    }
+    // Not used anymore since upon new sign up the user should be dumped to the registered user sign in page
+//    public void login(String username, String password) {
+//        // can be launched in a separate asynchronous job
+//        Result<LoggedInUser> result = loginRepository.login(username, password);
+//
+//        if (result instanceof Result.Success) {
+//            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
+//            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
+//        } else {
+//            loginResult.setValue(new LoginResult(R.string.login_failed));
+//        }
+//    }
 
     public Boolean signUp(String username, String email, String password) {
         Result<LoggedInUser> result = loginRepository.signUp(username, email, password);
@@ -79,20 +80,6 @@ public class NU_ViewModel extends ViewModel {
         } else {
             loginFormState.setValue(new NU_FormState(true));
         }
-
-
-        // Old not great system
-//        if (!isUserNameValid(username)) {
-//            loginFormState.setValue(new NU_FormState(R.string.invalid_username, null, null, null));
-//        } else if (!isEmailValid(email)) {
-//            loginFormState.setValue(new NU_FormState(null, R.string.invalid_email, null, null));
-//        } else if (!isPasswordValid(password)) {
-//            loginFormState.setValue(new NU_FormState(null, null, R.string.invalid_password, null));
-//        } else if (!isConfirmationValid(password, confirm)) {
-//            loginFormState.setValue(new NU_FormState(null, null, null, R.string.invalid_confirm));
-//        } else {
-//            loginFormState.setValue(new NU_FormState(true));
-//        }
     }
 
     // A placeholder username validation check

@@ -18,55 +18,38 @@ public class LoginDataSource {
     Boolean loginSuccess = false;
     String errorMsg;
 
-    public Result<LoggedInUser> login(String email, String password) {
-//        loginSuccess = false; // ensure boolean is set correctly on call of login;
-//        try {
-//            // Attempt to log in with AWS
-//            Amplify.Auth.signIn(
-//                    email,
-//                    password,
-//                    result -> {
-//                        loginSuccess = true;
-//                        Log.i("Tutorial", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
-//                        success();
-//                    },
-//                    error -> {
-//                        Log.e("Tutorial", error.toString());
-//                        failure(error.toString());
-//                    }
-//            );
-//            Log.i("Tutorial", "Value of loginSuccess end of try: " + loginSuccess.toString());
-//        } catch (Exception e) {
-//            // To catch API failure
-//            return new Result.Error(new IOException("API error logging in", e));
+        // Not used anymore since the login call is now a the top.
+//    public Result<LoggedInUser> login(String email, String password) {
+//        // Attempt to log in with AWS
+//        Amplify.Auth.signIn(
+//                email,
+//                password,
+//                result -> {
+//                    loginSuccess = true;
+//                    Log.i("Tutorial", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
+//                },
+//                error -> {
+//                    loginSuccess = false;
+//                    errorMsg = error.toString();
+//                    Log.e("Tutorial", error.toString());
+//                }
+//        );
+//
+//        Log.i("Tutorial", "Value of loginSuccess out if try/catch: " + loginSuccess.toString());
+//        if (loginSuccess) {
+//            loginSuccess = false;
+//            return new Result.Success<>(new LoggedInUser(UUID.randomUUID().toString(), email));
+//        } else {
+//            return new Result.Error(new IOException(errorMsg));
 //        }
-
-        // Attempt to log in with AWS
-        Amplify.Auth.signIn(
-                email,
-                password,
-                result -> {
-                    loginSuccess = true;
-                    Log.i("Tutorial", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
-                },
-                error -> {
-                    loginSuccess = false;
-                    errorMsg = error.toString();
-                    Log.e("Tutorial", error.toString());
-                }
-        );
-
-        Log.i("Tutorial", "Value of loginSuccess out if try/catch: " + loginSuccess.toString());
-        if (loginSuccess) {
-            loginSuccess = false;
-            return new Result.Success<>(new LoggedInUser(UUID.randomUUID().toString(), email));
-        } else {
-            return new Result.Error(new IOException(errorMsg));
-        }
-
-    }
+//
+//    }
 
 
+    // Bug Theory:
+    // This call suffers from the same issue that the login did before re-arch.
+    // The AWS result is taking longer to return and is not done before the code launches the
+    // next lines creating a new user. This is why it seems to crash.
     public Result<LoggedInUser> signUp(String username, String email, String password) {
 
         try {

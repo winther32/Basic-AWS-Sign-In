@@ -18,6 +18,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.todo.MainActivity;
 import com.example.todo.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -67,8 +68,6 @@ public class LoginActivity extends AppCompatActivity {
                 updateUiWithUser(loginResult.getSuccess());
 
                 setResult(Activity.RESULT_OK);
-                //Complete and destroy login activity once successful
-                finish();
             }
         });
 
@@ -136,7 +135,11 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        //Complete and destroy login activity once successful
+        finish();
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {

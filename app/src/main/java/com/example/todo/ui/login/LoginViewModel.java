@@ -8,6 +8,8 @@ import android.util.Log;
 import android.util.Patterns;
 
 import com.amazonaws.mobileconnectors.cognitoauth.Auth;
+import com.amplifyframework.auth.AuthException;
+import com.amplifyframework.auth.result.AuthSignInResult;
 import com.amplifyframework.core.Amplify;
 import com.example.todo.data.LoginRepository;
 import com.example.todo.data.Result;
@@ -39,39 +41,43 @@ public class LoginViewModel extends ViewModel {
     public void login(String email, String password) throws ExecutionException, InterruptedException {
         // FutureTask is promise that task is going to be run with a runnable and result.
         final FutureTask<?> ft = new FutureTask<>(() -> {}, null);
-        String[] success = {"empty"};
+        AuthSignInResult[] success = { null }; // Use this as a wrapper for the info
+        AuthException[] failure = { null };
 
         Amplify.Auth.signIn(
                 email,
                 password,
                 result -> {
-//                    login_success(email);
                     Log.i("Tutorial", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
-//                    Log.i("Tutorial", result.toString());
-                    success[0] = result.toString();
+                    Log.i("Tutorial", result.toString());
+                    success[0] = result;
                     ft.run();
                 },
                 error -> {
-//                    login_failure(error.toString());
                     Log.e("Tutorial", error.toString());
+                    failure[0] = error;
                     ft.run();
                 }
         );
 
+        // This waits for the ft to run which ensures that the background task (AWS signin) finishes
         ft.get();
-        Log.i("Tutorial", success[0]);
-    }
 
-    // Called in success of AWS login call
-    public void login_success(String email) {
-        Result<LoggedInUser> result = new Result.Success<>(new LoggedInUser(UUID.randomUUID().toString(), email));
-        LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-        loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
-    }
+        // Use results from signIn call below
+        // Both failure and success shouldn't be empty at this point.
+       if (success[0] != null) {
+           Result<LoggedInUser> result = new Result.Success<>(new LoggedInUser(UUID.randomUUID().toString(), email));
+           LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
+           loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
+       } else if (failure[0] != null) {
+           Throwable reason = failure[0].getCause();
+           // Get the error message string from the aws authExecption.
+           Log.e("Tutorial", reason.toString().split("(:)")[1].split("\\.")[0]);
+           loginResult.setValue(new LoginResult(R.string.login_failed));
+       } else {
+           Log.e("Tutorial", "Auth SignIn fail. No write to either wrapper");
+       }
 
-    // Called on failed AWS login call
-    public void login_failure(String errorMsg) {
-        loginResult.setValue(new LoginResult(R.string.login_failed));
     }
 
     public void loginDataChanged(String username, String password) {

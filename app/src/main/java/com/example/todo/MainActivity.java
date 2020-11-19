@@ -38,13 +38,17 @@ public class MainActivity extends AppCompatActivity {
         signOut = findViewById(R.id.signOut_main);
         user = findViewById(R.id.userdisp_main);
 
+
+        //TODO: This should be moved to the login Repo as a method there
         // Verify the current auth session
         Amplify.Auth.fetchAuthSession(
                 result -> Log.i("Tutorial", result.toString()),
                 error -> Log.e("Tutorial", error.toString())
         );
 
+        // TODO: This should be moved to the login Repo as the isLoggedIn method
         AuthUser awsUser = Amplify.Auth.getCurrentUser();
+
         if (awsUser == null) {
             user.setText("Not signed in");
         } else {
@@ -55,60 +59,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Signs current user out.
         signOut.setOnClickListener(v -> {
+            // TODO: This should be called by the login repo as the logout method
             Amplify.Auth.signOut(
                     () -> Log.i("Tutorial", "Signed out successfully"),
                     error -> Log.e("Tutorial", error.toString())
             );
             user.setText("Signed out");
         });
-
-        // Log the DataStore sync with the cloud
-//        Amplify.DataStore.observe(Todo.class,
-//                started -> Log.i("Tutorial", "Observation began."),
-//                change -> Log.i("Tutorial", change.item().toString()),
-//                failure -> Log.e("Tutorial", "Observation failed.", failure),
-//                () -> Log.i("Tutorial", "Observation complete.")
-//        );
-
-        // Below are examples of creating a savable item and then calling the save
-        // This will add the object into the aws DataStore which will hold data locally
-        // It will also work to sync with the cloud
-//        Todo item = Todo.builder()
-//                .name("Build Android application")
-//                .description("Build an Android application using Amplify")
-//                .build();
-//
-//        Amplify.DataStore.save(
-//                item,
-//                success -> Log.i("Tutorial", "Saved item: " + success.item().getName()),
-//                error -> Log.e("Tutorial", "Could not save item to DataStore", error)
-//        );
-
-
-        // Example code of a query to the DataStore to retrieve the data within
-//        Amplify.DataStore.query(
-//                Todo.class,
-//                Where.matches(
-//                        Todo.PRIORITY.eq(Priority.HIGH)
-//                ),
-//                todos -> {
-//                    while (todos.hasNext()) {
-//                        Todo todo = todos.next();
-//
-//                        Log.i("Tutorial", "==== Todo ====");
-//                        Log.i("Tutorial", "Name: " + todo.getName());
-//
-//                        if (todo.getPriority() != null) {
-//                            Log.i("Tutorial", "Priority: " + todo.getPriority().toString());
-//                        }
-//
-//                        if (todo.getDescription() != null) {
-//                            Log.i("Tutorial", "Description: " + todo.getDescription());
-//                        }
-//                    }
-//                },
-//                failure -> Log.e("Tutorial", "Could not query DataStore", failure)
-//        );
     }
 
     public void launchLogIn() {

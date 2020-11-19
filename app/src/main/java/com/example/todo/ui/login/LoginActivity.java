@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.StringRes;
@@ -24,6 +25,7 @@ import com.example.todo.R;
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
+    TextView errorTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,9 +35,10 @@ public class LoginActivity extends AppCompatActivity {
         assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
 
-
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
+
+        errorTextView = findViewById(R.id.errorMsg);
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
@@ -43,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         final Button newUserButton = findViewById(R.id.newUser_login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
+        // Watches the form state and sets the validity error messages in the edit text boxes accordingly
         loginViewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {
                 return;
@@ -56,6 +60,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
+        // Listens for the log in result to change. This occurs when a login attempt is made
         loginViewModel.getLoginResult().observe(this, loginResult -> {
             if (loginResult == null) {
                 return;
@@ -71,6 +77,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // TextWatcher listens for updates to the input fields in order to update the view model
+        // The view model then updates the form state
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -102,11 +110,16 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
+            // Disable the ability to edit the user inputs when loading
+            usernameEditText.setFocusable(false);
+            passwordEditText.setFocusable(false);
             try {
-                loginViewModel.login(usernameEditText.getText().toString(),
+                loginViewModel.login(usernameEditText.getText().toString().trim(),
                         passwordEditText.getText().toString());
             } catch (Exception e) {
+                // Expect to catch exceptions where the future task doesn't complete
                 Log.e("Tutorial", e.toString());
+                //TODO: update the UI to reflect the failure of the log in attempt & verify no crash
             }
         });
 
@@ -134,7 +147,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
@@ -142,7 +154,8 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    private void showLoginFailed(String errorString) {
+        Toast.makeText(getApplicationContext(), R.string.login_failed, Toast.LENGTH_SHORT).show();
+        errorTextView.setText(errorString);
     }
 }

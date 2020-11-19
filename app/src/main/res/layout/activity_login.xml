@@ -94,4 +94,14 @@
         app:layout_constraintStart_toStartOf="@+id/newUser_login"
         app:layout_constraintTop_toBottomOf="@+id/newUser_login" />
 
+    <TextView
+        android:id="@+id/errorMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:textColor="#EF1616"
+        app:layout_constraintBottom_toTopOf="@+id/username"
+        app:layout_constraintEnd_toEndOf="@+id/username"
+        app:layout_constraintStart_toStartOf="@+id/username" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

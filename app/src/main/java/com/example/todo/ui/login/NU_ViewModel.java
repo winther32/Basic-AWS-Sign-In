@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import android.content.Intent;
 import android.util.Patterns;
 
+import com.amplifyframework.AmplifyException;
 import com.example.todo.data.LoginRepository;
 import com.example.todo.data.Result;
 import com.example.todo.data.model.LoggedInUser;
@@ -46,17 +47,24 @@ public class NU_ViewModel extends ViewModel {
 //        }
 //    }
 
-    public Boolean signUp(String username, String email, String password) {
-        Result<LoggedInUser> result = loginRepository.signUp(username, email, password);
-        // Boolean if Sign Up with AWS was a success or not
-        if (result instanceof Result.Success) {
-            return true;
-        } else {
-            loginResult.setValue(new LoginResult(R.string.signup_failed));
-            return false;
+    public void signUp(String username, String email, String password) {
+
+        try {
+            Result<LoggedInUser> result = loginRepository.signUp(username, email, password);
+            // Setting to a user view constitutes successful login to listener in newUser
+            loginResult.setValue((new LoginResult(new LoggedInUserView(email))));
+        } catch (AmplifyException e){
+            // AWS returned an error
+            String failure_cause = e.getCause().toString();
+            // Setting to a string tells listener in newUser that this is an error. Failed attempt
+            loginResult.setValue(new LoginResult(failure_cause));
+        } catch (Exception e) {
+            // FT did not complete and threw or got a nullPtr meaning AWS did not return anything
+            loginResult.setValue(new LoginResult(e.toString()));
         }
     }
 
+    // On change of the input fields this is called to update the state of the form
     public void loginDataChanged(String username, String email, String password, String confirm) {
 
         // Maybe not the perfect solution for form behavior but good enough for prelim

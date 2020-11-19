@@ -1,6 +1,11 @@
 package com.example.todo.data;
 
+import com.amplifyframework.AmplifyException;
+import com.amplifyframework.auth.AuthException;
+import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.example.todo.data.model.LoggedInUser;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -54,8 +59,15 @@ public class LoginRepository {
 //    }
 
     // Sign up does not sign in
-    public Result<LoggedInUser> signUp(String username, String email, String password) {
-        Result<LoggedInUser> result = dataSource.signUp(username, email, password);
-        return result;
+    public Result<LoggedInUser> signUp(String username, String email, String password) throws NullPointerException, AmplifyException, ExecutionException, InterruptedException {
+        // Attempt to run the signUp call from AWS via dataSource
+        AuthSignUpResult result = dataSource.signUp(username, email, password);
+        if (result != null) {
+            Result<LoggedInUser> success = new Result.Success<>(new LoggedInUser("101", email));
+            return success;
+        } else {
+            // got a null result = big failure and got nothing back from AWS and FT completed
+            throw new NullPointerException("Got nothing back from AWS and FT completed");
+        }
     }
 }

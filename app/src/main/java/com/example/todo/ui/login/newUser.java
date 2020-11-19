@@ -40,6 +40,7 @@ public class newUser extends AppCompatActivity {
         final EditText passwordConfirmEditText = findViewById(R.id.passwordConfirm_nu);
         final Button submit = findViewById(R.id.submit_nu);
 
+        // Watches the form state and sets the validity error messages in the edit text boxes accordingly
         viewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {
                 return;
@@ -59,6 +60,8 @@ public class newUser extends AppCompatActivity {
             }
         });
 
+        // Listens for the log in result to change. This occurs when a login attempt is made
+        // TODO: implement how the UI should respond based on the sign up results
         viewModel.getLoginResult().observe(this, loginResult -> {
             if (loginResult == null) {
                 return;
@@ -75,6 +78,8 @@ public class newUser extends AppCompatActivity {
             finish();
         });
 
+        // TextWatcher listens for updates to the input fields in order to update the view model
+        // The view model then updates the form state
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -107,16 +112,30 @@ public class newUser extends AppCompatActivity {
 //            return false;
 //        });
 
+        // TODO: Verify which is used to actually log in (email or username)
         submit.setOnClickListener(v -> {
-            // On sign up success launch confirmation. Else show error in Toast.
-            if (viewModel.signUp(usernameEditText.getText().toString(), emailEditText.getText().toString(),
-                    passwordEditText.getText().toString())) {
-                // launch confirmation activity
-                launchConfirmation(emailEditText.getText().toString());
-                finish();
-            } else {
-                Toast.makeText(this, "Sign Up failed", Toast.LENGTH_SHORT).show();
-            }
+            //TODO: figure out the loading wheel.
+
+            // Disable the ability to edit the user inputs when loading
+            usernameEditText.setFocusable(false);
+            emailEditText.setFocusable(false);
+            passwordEditText.setFocusable(false);
+            passwordConfirmEditText.setFocusable(false);
+
+            viewModel.signUp(usernameEditText.getText().toString().toLowerCase(), emailEditText.getText().toString().toLowerCase(),
+                    passwordEditText.getText().toString());
+
+
+
+//            // On sign up success launch confirmation. Else show error in Toast.
+//            if (viewModel.signUp(usernameEditText.getText().toString().toLowerCase(), emailEditText.getText().toString().toLowerCase(),
+//                    passwordEditText.getText().toString())) {
+//                // launch confirmation activity
+//                launchConfirmation(emailEditText.getText().toString());
+//                finish();
+//            } else {
+//                Toast.makeText(this, "Sign Up failed", Toast.LENGTH_SHORT).show();
+//            }
         });
 
     }
@@ -127,13 +146,18 @@ public class newUser extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // Successful sign up completed. This launches next step -> email verification (acct. confirmation)
     private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        // Create a toast to indicate successful sign up
+        Toast.makeText(getApplicationContext(), getString(R.string.signup_success), Toast.LENGTH_LONG).show();
+
+        // Launch the new confirmation activity.
+        launchConfirmation(model.getDisplayName());
+        finish();
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    private void showLoginFailed(String errorString) {
+        Toast.makeText(getApplicationContext(), R.string.signup_failed, Toast.LENGTH_SHORT).show();
+        // TODO: Add a display change that shows the error received
     }
 }

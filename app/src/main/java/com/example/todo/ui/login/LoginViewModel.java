@@ -38,12 +38,14 @@ public class LoginViewModel extends ViewModel {
         return loginResult;
     }
 
+    // TODO: Move this into the login dataSource passing through the repo
     public void login(String email, String password) throws ExecutionException, InterruptedException {
         // FutureTask is promise that task is going to be run with a runnable and result.
         final FutureTask<?> ft = new FutureTask<>(() -> {}, null);
         AuthSignInResult[] success = { null }; // Use this as a wrapper for the info
         AuthException[] failure = { null };
 
+        // Sign in call to AWS
         Amplify.Auth.signIn(
                 email,
                 password,
@@ -51,12 +53,12 @@ public class LoginViewModel extends ViewModel {
                     Log.i("Tutorial", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
                     Log.i("Tutorial", result.toString());
                     success[0] = result;
-                    ft.run();
+                    ft.run(); // Start the future task
                 },
                 error -> {
                     Log.e("Tutorial", error.toString());
                     failure[0] = error;
-                    ft.run();
+                    ft.run(); // Start the future task
                 }
         );
 
@@ -66,20 +68,23 @@ public class LoginViewModel extends ViewModel {
         // Use results from signIn call below
         // Both failure and success shouldn't be empty at this point.
        if (success[0] != null) {
+           // On success of the aws sign in call create a success result
            Result<LoggedInUser> result = new Result.Success<>(new LoggedInUser(UUID.randomUUID().toString(), email));
            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
        } else if (failure[0] != null) {
-           Throwable reason = failure[0].getCause();
+           // Aws call received an error and was unable to sign in
+           Throwable reason = failure[0].getCause(); // get cause from exception
            // Get the error message string from the aws authExecption.
-           Log.e("Tutorial", reason.toString().split("(:)")[1].split("\\.")[0]);
-           loginResult.setValue(new LoginResult(R.string.login_failed));
+           String failure_cause = reason.toString().split("(:)")[1].split("\\.")[0];
+           loginResult.setValue(new LoginResult(failure_cause));
        } else {
            Log.e("Tutorial", "Auth SignIn fail. No write to either wrapper");
        }
 
     }
 
+    // On change of the input fields this is called to update the state of the form
     public void loginDataChanged(String username, String password) {
         if (!isUserNameValid(username)) {
             loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));

@@ -68,11 +68,15 @@ public class LoginActivity extends AppCompatActivity {
             }
             loadingProgressBar.setVisibility(View.GONE);
             if (loginResult.getError() != null) {
+                //Re-enable ability to edit fields
+                usernameEditText.setEnabled(true);
+                passwordEditText.setEnabled(true);
+                //Enable the login button again
+                loginButton.setEnabled(true);
                 showLoginFailed(loginResult.getError());
             }
             if (loginResult.getSuccess() != null) {
                 updateUiWithUser(loginResult.getSuccess());
-
                 setResult(Activity.RESULT_OK);
             }
         });
@@ -110,9 +114,10 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
-            // Disable the ability to edit the user inputs when loading
-            usernameEditText.setFocusable(false);
-            passwordEditText.setFocusable(false);
+            // Disable the ability to edit the user inputs when loading AWS response
+            usernameEditText.setEnabled(false);
+            passwordEditText.setEnabled(false);
+            loginButton.setEnabled(false);
             try {
                 loginViewModel.login(usernameEditText.getText().toString().trim(),
                         passwordEditText.getText().toString());

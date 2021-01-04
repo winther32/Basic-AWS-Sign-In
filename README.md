@@ -1,6 +1,10 @@
 # Basic AWS Sign In
-Learning about making an AWS backed sign-in flow in an android app.
+By Mac Lyle
 
-I am using the basic architecture of the Android Studio Sign in template with AWS Cognito sign in as the backend.
+## Overview 
+This Android app is a sandbox where I am implementing a sign in flow. I also plan on adding a simple per user storage element as well. 
 
-Flow consists of a home landing page, a login for existing users, create a new user login, and a confirmation page for new user sign up.
+The purpose of this repo is to learn about interacting with AWS APIs as well as handling workflows such as sign in/up. 
+
+### Backend
+For the backend of the sign in I am using AWS Cognito. For storage I also plan on using AWS 

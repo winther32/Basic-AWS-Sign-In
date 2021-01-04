@@ -91,12 +91,6 @@ public class LoginDataSource {
         }
         return success[0]; // NOTE: this can be a null value
 
-//            // Create the new user
-//            LoggedInUser user = new LoggedInUser(UUID.randomUUID().toString(), email);
-//            return new Result.Success<>(user);
-//        } catch (Exception e) {
-//            return new Result.Error(new IOException("Error signing up with AWS", e));
-//        }
     }
 
     // Not currently called. Signing out from button on main

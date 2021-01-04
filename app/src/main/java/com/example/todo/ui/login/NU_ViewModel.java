@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import android.content.Intent;
+import android.util.Log;
 import android.util.Patterns;
 
 import com.amplifyframework.AmplifyException;
@@ -34,33 +35,27 @@ public class NU_ViewModel extends ViewModel {
         return loginResult;
     }
 
-    // Not used anymore since upon new sign up the user should be dumped to the registered user sign in page
-//    public void login(String username, String password) {
-//        // can be launched in a separate asynchronous job
-//        Result<LoggedInUser> result = loginRepository.login(username, password);
-//
-//        if (result instanceof Result.Success) {
-//            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-//            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
-//        } else {
-//            loginResult.setValue(new LoginResult(R.string.login_failed));
-//        }
-//    }
 
     public void signUp(String username, String email, String password) {
 
         try {
             Result<LoggedInUser> result = loginRepository.signUp(username, email, password);
-            // Setting to a user view constitutes successful login to listener in newUser
-            loginResult.setValue((new LoginResult(new LoggedInUserView(email))));
+            // If we get to here without an exception. Should expect this to be a successful attempt
+            //Downcast result to LoggedInUser
+            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
+            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
         } catch (AmplifyException e){
             // AWS returned an error
             String failure_cause = e.getCause().toString();
+            Log.e("Tutorial", failure_cause); // Log full error message
+            // Parse the AWS error into a readable string for UI
+            failure_cause = failure_cause.split("(:)")[1].split("\\.")[0];
             // Setting to a string tells listener in newUser that this is an error. Failed attempt
             loginResult.setValue(new LoginResult(failure_cause));
         } catch (Exception e) {
             // FT did not complete and threw or got a nullPtr meaning AWS did not return anything
-            loginResult.setValue(new LoginResult(e.toString()));
+            Log.e("Tutorial", e.toString()); // Log the actual exception
+            loginResult.setValue(new LoginResult("Unexpected Error")); // Return error string for display
         }
     }
 
